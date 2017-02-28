@@ -21,7 +21,7 @@ namespace CopyFiles
         string[] allPathsArray = null;
         int missingFiles = 0;
         int counter = 0;
-        //BackgroundWorker bw;
+        BackgroundWorker bw;
         #endregion
 
         #region on Form Load
@@ -30,12 +30,44 @@ namespace CopyFiles
             InitializeComponent();
             lblFound.Text = "";
             lblNotFound.Text = "";
-            ////======================================
-            //bw = new BackgroundWorker();
-            //bw.WorkerReportsProgress = true;
-            //bw.WorkerSupportsCancellation = true;
-            //bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-            ////======================================
+            InitializeBackgroundWorker();
+        }
+       #endregion
+
+        #region BackGround Worker event-Method 
+        private void InitializeBackgroundWorker()
+        {
+            bw = new BackgroundWorker();
+            bw.WorkerReportsProgress = true;
+            bw.WorkerSupportsCancellation = true;
+            bw.DoWork += new DoWorkEventHandler(bw_DoWork); //param is an event handler//bw.RunWorkerAsync(); raises the event .DoWord delegate w inturn invokes bw_DoWork() where ALL
+            //bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+            //bw.ProgressChanged += new ProgressChangedEventHandler(bw_ProgressChanged);
+        }
+
+        
+        private void bw_DoWork(Object sender, DoWorkEventArgs e)
+        {
+            allPathsArray = File.ReadAllLines(fileName, Encoding.UTF8);
+            lblFound.Text = "Files Found: " + allPathsArray.Length;
+
+            foreach (string path in allPathsArray)
+            {
+                newFile = folder + "\\" + path.Substring(path.LastIndexOf('\\') + 1);
+                try
+                {
+                    File.Copy(path, newFile, true);
+                }
+                catch (FileNotFoundException ex)
+                {
+                    missingFiles++;
+                    continue;
+                }
+            }
+            lblNotFound.Text = " Files NOT found: " + missingFiles;
+            btnFrom.Enabled = true;
+            btnTo.Enabled = true;
+            btnStart.Enabled = true;
         }
         #endregion
 
@@ -78,6 +110,8 @@ namespace CopyFiles
         #region click StartCopying btn
         private void btnStart_Click(object sender, EventArgs e)
         {
+            bw.RunWorkerAsync();
+
             if (fileName == "")
             {
                 btnStart.Text = "Please select a file!";
@@ -100,31 +134,7 @@ namespace CopyFiles
         }
         #endregion
 
-        #region event-Method to startCopying
-        //private void bw_DoWork(Object sender, DoWorkEventArgs e)
-        //{
-        //    allPathsArray = File.ReadAllLines(fileName, Encoding.UTF8);
-        //    lblFound.Text = "Files Found: " + allPathsArray.Length;
 
-        //    foreach (string path in allPathsArray)
-        //    {
-        //        newFile = folder + "\\" + path.Substring(path.LastIndexOf('\\') + 1);
-        //        try
-        //        {
-        //            File.Copy(path, newFile, true);
-        //        }
-        //        catch (FileNotFoundException ex)
-        //        {
-        //            missingFiles++;
-        //            continue;
-        //        }
-        //    }
-        //    lblNotFound.Text = " Files NOT found: " + missingFiles;
-        //    btnFrom.Enabled = true;
-        //    btnTo.Enabled = true;
-        //    btnStart.Enabled = true;
-        //}
-        #endregion
 
         #region Method StartCopying
         private void startCopying()
