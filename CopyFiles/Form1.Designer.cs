@@ -39,11 +39,11 @@
             // 
             // btnFrom
             // 
-            this.btnFrom.Location = new System.Drawing.Point(537, 29);
+            this.btnFrom.Location = new System.Drawing.Point(483, 29);
             this.btnFrom.Name = "btnFrom";
-            this.btnFrom.Size = new System.Drawing.Size(75, 37);
+            this.btnFrom.Size = new System.Drawing.Size(129, 37);
             this.btnFrom.TabIndex = 0;
-            this.btnFrom.Text = "Paths";
+            this.btnFrom.Text = "Copy From";
             this.btnFrom.UseVisualStyleBackColor = true;
             this.btnFrom.Click += new System.EventHandler(this.btnFrom_Click);
             // 
@@ -51,21 +51,23 @@
             // 
             this.textBox1.Location = new System.Drawing.Point(30, 37);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(491, 22);
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(447, 22);
             this.textBox1.TabIndex = 1;
             // 
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(30, 112);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(491, 22);
+            this.textBox2.ReadOnly = true;
+            this.textBox2.Size = new System.Drawing.Size(447, 22);
             this.textBox2.TabIndex = 2;
             // 
             // btnTo
             // 
-            this.btnTo.Location = new System.Drawing.Point(537, 107);
+            this.btnTo.Location = new System.Drawing.Point(483, 107);
             this.btnTo.Name = "btnTo";
-            this.btnTo.Size = new System.Drawing.Size(75, 34);
+            this.btnTo.Size = new System.Drawing.Size(129, 34);
             this.btnTo.TabIndex = 3;
             this.btnTo.Text = "Copy To";
             this.btnTo.UseVisualStyleBackColor = true;
