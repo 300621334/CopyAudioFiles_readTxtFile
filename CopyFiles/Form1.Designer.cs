@@ -35,6 +35,7 @@
             this.btnStart = new System.Windows.Forms.Button();
             this.lblFound = new System.Windows.Forms.Label();
             this.lblNotFound = new System.Windows.Forms.Label();
+            this.lblReportProgress = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnFrom
@@ -101,11 +102,23 @@
             this.lblNotFound.TabIndex = 6;
             this.lblNotFound.Text = "label2";
             // 
+            // lblReportProgress
+            // 
+            this.lblReportProgress.AutoSize = true;
+            this.lblReportProgress.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblReportProgress.ForeColor = System.Drawing.Color.Blue;
+            this.lblReportProgress.Location = new System.Drawing.Point(135, 6);
+            this.lblReportProgress.Name = "lblReportProgress";
+            this.lblReportProgress.Size = new System.Drawing.Size(70, 25);
+            this.lblReportProgress.TabIndex = 7;
+            this.lblReportProgress.Text = "label1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(631, 206);
+            this.Controls.Add(this.lblReportProgress);
             this.Controls.Add(this.lblNotFound);
             this.Controls.Add(this.lblFound);
             this.Controls.Add(this.btnStart);
@@ -129,6 +142,7 @@
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Label lblFound;
         private System.Windows.Forms.Label lblNotFound;
+        private System.Windows.Forms.Label lblReportProgress;
     }
 }
 

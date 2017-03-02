@@ -9,7 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;//needed for File....
 //Overview of DialogueBoxes: https://msdn.microsoft.com/en-us/library/aa969773(v=vs.110).aspx
-
+/*bgWorker:
+ 1.create instance of bw.
+ 2.init bw on loading of form (inside constructor Form1())
+ * Method ------------------       calls delegate-event
+ * ===============                 =======================
+ -bw.RunWorkerAsync()    ---calls this---> bw.DoWork += bw_DoWork;// or same thing +=new DoWorkEventHandler(bw_DoWork);
+ -bw.ReportProgress(i)   ---calls this---> bw.ProgressChanged += bw_ProgressChanged; //reports progress from within DoWork-thread to UI-thread
+ -when bw efinishes job..---calls this---> bw.RunWorkerCompleted += bw_RunWorkerCompleted;
+ * */
 namespace CopyFiles
 {
     public partial class Form1 : Form
@@ -20,8 +28,9 @@ namespace CopyFiles
         string newFile = "";
         string[] allPathsArray = null;
         int missingFiles = 0;
+        int found = 0;
         int counter = 0;
-        //BackgroundWorker bw;
+        BackgroundWorker bw;
         #endregion
 
         #region on Form Load
@@ -30,45 +39,32 @@ namespace CopyFiles
             InitializeComponent();
             lblFound.Text = "";
             lblNotFound.Text = "";
-            //InitializeBackgroundWorker();
+            lblReportProgress.Text = "";
+            InitializeBackgroundWorker();
         }
        #endregion
 
         #region BackGround Worker event-Method 
-        //private void InitializeBackgroundWorker()
-        //{
-        //    bw = new BackgroundWorker();
-        //    bw.WorkerReportsProgress = true;
-        //    bw.WorkerSupportsCancellation = true;
-        //    bw.DoWork += new DoWorkEventHandler(bw_DoWork); //param is an event handler//bw.RunWorkerAsync(); raises the event .DoWord delegate w inturn invokes bw_DoWork() where ALL
-        //    //bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
-        //    //bw.ProgressChanged += new ProgressChangedEventHandler(bw_ProgressChanged);
-        //}
+        private void InitializeBackgroundWorker()
+        {
+            bw = new BackgroundWorker();
+            bw.WorkerReportsProgress = true;
+            bw.WorkerSupportsCancellation = true;
+            bw.DoWork += new DoWorkEventHandler(bw_DoWork);//or//bw.DoWork += bw_DoWork; works too //param is an event handler//bw.RunWorkerAsync(); raises the event .DoWord delegate w inturn invokes bw_DoWork() where ALL
+            //bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+            bw.ProgressChanged += bw_ProgressChanged;
+        }
 
-        
-        //private void bw_DoWork(Object sender, DoWorkEventArgs e)
-        //{
-        //    allPathsArray = File.ReadAllLines(fileName, Encoding.UTF8);
-        //    lblFound.Text = "Files Found: " + allPathsArray.Length;
+        private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            lblReportProgress.Text = e.ProgressPercentage.ToString() + " % Copied";
+        }
 
-        //    foreach (string path in allPathsArray)
-        //    {
-        //        newFile = folder + "\\" + path.Substring(path.LastIndexOf('\\') + 1);
-        //        try
-        //        {
-        //            File.Copy(path, newFile, true);
-        //        }
-        //        catch (FileNotFoundException ex)
-        //        {
-        //            missingFiles++;
-        //            continue;
-        //        }
-        //    }
-        //    lblNotFound.Text = " Files NOT found: " + missingFiles;
-        //    btnFrom.Enabled = true;
-        //    btnTo.Enabled = true;
-        //    btnStart.Enabled = true;
-        //}
+
+        private void bw_DoWork(Object sender, DoWorkEventArgs e)
+        {
+            startCopying();
+        }
         #endregion
 
         #region click From-btn
@@ -110,7 +106,7 @@ namespace CopyFiles
         #region click StartCopying btn
         private void btnStart_Click(object sender, EventArgs e)
         {
-            //bw.RunWorkerAsync();
+           
 
             if (fileName == "")
             {
@@ -122,15 +118,16 @@ namespace CopyFiles
                 btnStart.Text = "Please select a folder!";
                 return;
             }
+            if (bw.IsBusy != true)
+            {
+                bw.RunWorkerAsync();
+            }
             btnFrom.Enabled  = false;
             btnTo.Enabled    = false;
             btnStart.Enabled = false;
-            startCopying();
+            //startCopying();
 
-           //if(bw.IsBusy != true)
-           //{
-           //    bw.RunWorkerAsync();
-           //}
+          
         }
         #endregion
 
@@ -144,7 +141,9 @@ namespace CopyFiles
 
             foreach (string path in allPathsArray)
             {
-                if(!string.IsNullOrWhiteSpace(path))
+                found++;
+                //if(!string.IsNullOrWhiteSpace(path))
+                if (File.Exists(path))
                 {
                 newFile = folder + "\\" + path.Substring(path.LastIndexOf('\\') + 1);
                 try
@@ -158,9 +157,11 @@ namespace CopyFiles
                     continue;
                 }
                 }
+                bw.ReportProgress(found*100/allPathsArray.Length);
             }
             lblFound.Text = "Files Found: " + counter;
             counter = 0;
+            found = 0;
             lblNotFound.Text = " Files NOT found: " + missingFiles;
             btnFrom.Enabled = true;
             btnTo.Enabled = true;
