@@ -29,6 +29,7 @@ namespace CopyFiles
         string[] allPathsArray = null;
         int missingFiles = 0;
         int found = 0;
+        int linesRead = 0;
         int counter = 0;
         BackgroundWorker bw;
         #endregion
@@ -141,7 +142,7 @@ namespace CopyFiles
 
             foreach (string path in allPathsArray)
             {
-                found++;
+                linesRead++;
                 //if(!string.IsNullOrWhiteSpace(path))
                 if (File.Exists(path))
                 {
@@ -157,11 +158,12 @@ namespace CopyFiles
                     continue;
                 }
                 }
-                bw.ReportProgress(found*100/allPathsArray.Length);
+                bw.ReportProgress(linesRead*100/allPathsArray.Length);
             }
             lblFound.Text = "Files Found: " + counter;
             counter = 0;
             found = 0;
+            linesRead = 0;
             lblNotFound.Text = " Files NOT found: " + missingFiles;
             btnFrom.Enabled = true;
             btnTo.Enabled = true;
