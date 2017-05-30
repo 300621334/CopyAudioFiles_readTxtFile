@@ -44,7 +44,7 @@
             this.btnFrom.Name = "btnFrom";
             this.btnFrom.Size = new System.Drawing.Size(129, 37);
             this.btnFrom.TabIndex = 0;
-            this.btnFrom.Text = "Copy From";
+            this.btnFrom.Text = "Soure";
             this.btnFrom.UseVisualStyleBackColor = true;
             this.btnFrom.Click += new System.EventHandler(this.btnFrom_Click);
             // 
@@ -70,7 +70,7 @@
             this.btnTo.Name = "btnTo";
             this.btnTo.Size = new System.Drawing.Size(129, 34);
             this.btnTo.TabIndex = 3;
-            this.btnTo.Text = "Copy To";
+            this.btnTo.Text = "Destination";
             this.btnTo.UseVisualStyleBackColor = true;
             this.btnTo.Click += new System.EventHandler(this.btnTo_Click);
             // 
@@ -127,7 +127,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.btnFrom);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Copy Files";
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -58,7 +58,7 @@ namespace CopyFiles
 
         private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            lblReportProgress.Text = e.ProgressPercentage.ToString() + " % Copied";
+            lblReportProgress.Text = e.ProgressPercentage.ToString() + " % Attempted";
         }
 
 
@@ -157,6 +157,10 @@ namespace CopyFiles
                     missingFiles++;
                     continue;
                 }
+                }
+                else
+                {
+                    if(!string.IsNullOrWhiteSpace(path)) missingFiles++;
                 }
                 bw.ReportProgress(linesRead*100/allPathsArray.Length);
             }
