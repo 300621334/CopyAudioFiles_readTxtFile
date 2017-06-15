@@ -58,18 +58,37 @@ namespace CopyFiles
 
         private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            lblReportProgress.Text = e.ProgressPercentage.ToString() + " % Attempted";
-            if(100 == e.ProgressPercentage)
+            if (999999 == e.ProgressPercentage)
             {
                 lblFound.Text = "Files Found: " + counter;//if set break point here & ebug then err. Thou runs fine without debug. Class-Race issue in multiThread apps. Speed at w sth is done matters. Tried moving this line to bw_completed BUT didn't work:Reason=<<If the BackgroundWorker was created from the UI thread, then the RunWorkerCompleted event will also be raised on the UI thread>> = https://social.msdn.microsoft.com/Forums/vstudio/en-US/110f362f-6009-465b-a940-895e23545ad5/getting-invalidoperationexception-when-running-debug-due-to-a-crossthread-operation?forum=vsdebug
                 counter = 0;
                 found = 0;
                 linesRead = 0;
+                fileName = "";
+                //folder = "";
                 lblNotFound.Text = " Files NOT found: " + missingFiles;
                 btnFrom.Enabled = true;
                 btnTo.Enabled = true;
                 btnStart.Enabled = true;
             }
+            else if (999 == e.ProgressPercentage)
+            {
+                lblFound.Text = "Files Found: " + counter;//if set break point here & ebug then err. Thou runs fine without debug. Class-Race issue in multiThread apps. Speed at w sth is done matters. Tried moving this line to bw_completed BUT didn't work:Reason=<<If the BackgroundWorker was created from the UI thread, then the RunWorkerCompleted event will also be raised on the UI thread>> = https://social.msdn.microsoft.com/Forums/vstudio/en-US/110f362f-6009-465b-a940-895e23545ad5/getting-invalidoperationexception-when-running-debug-due-to-a-crossthread-operation?forum=vsdebug
+                counter = 0;
+                found = 0;
+                linesRead = 0;
+                //fileName = "";
+                //folder = "";
+                lblNotFound.Text = " Files NOT found: " + missingFiles;
+                btnFrom.Enabled = true;
+                btnTo.Enabled = true;
+                btnStart.Enabled = true;
+            }
+            else
+            {
+                lblReportProgress.Text = e.ProgressPercentage.ToString() + " % Attempted";
+            }
+            
         }
 
 
@@ -118,7 +137,11 @@ namespace CopyFiles
         #region click StartCopying btn
         private void btnStart_Click(object sender, EventArgs e)
         {
-           
+            lblFound.Text = "";
+            lblNotFound.Text = "";
+            lblReportProgress.Text = "";
+            missingFiles = 0;
+            counter = 0;
 
             if (fileName == "")
             {
@@ -148,9 +171,20 @@ namespace CopyFiles
         #region Method StartCopying
         private void startCopying()
         {
-            allPathsArray = File.ReadAllLines(fileName, Encoding.UTF8);
-            
+            try
+            {
+                allPathsArray = File.ReadAllLines(fileName, Encoding.UTF8);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Source file not found!");
+                //Application.Restart();//does NOT restart bg worker thread hence err
+                bw.ReportProgress(999999);
+                return;
+            }
 
+            if (allPathsArray != null)
+            {
             foreach (string path in allPathsArray)
             {
                 linesRead++;
@@ -175,6 +209,8 @@ namespace CopyFiles
                 }
                 bw.ReportProgress(linesRead * 100 / allPathsArray.Length);//'ReportProgress' calls the delegate 'ProgressChanged' & indirectly all the methods assigned to that delg
             }
+        }
+            bw.ReportProgress(999);
             //lblFound.Text = "Files Found: " + counter;//if set break point here & ebug then err. Thou runs fine without debug. Class-Race issue in multiThread apps. Speed at w sth is done matters. Tried moving this line to bw_completed BUT didn't work:Reason=<<If the BackgroundWorker was created from the UI thread, then the RunWorkerCompleted event will also be raised on the UI thread>> = https://social.msdn.microsoft.com/Forums/vstudio/en-US/110f362f-6009-465b-a940-895e23545ad5/getting-invalidoperationexception-when-running-debug-due-to-a-crossthread-operation?forum=vsdebug
             //counter = 0;
             //found = 0;
