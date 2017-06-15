@@ -52,7 +52,7 @@ namespace CopyFiles
             bw.WorkerReportsProgress = true;
             bw.WorkerSupportsCancellation = true;
             bw.DoWork += new DoWorkEventHandler(bw_DoWork);//or//bw.DoWork += bw_DoWork; works too //param is an event handler//bw.RunWorkerAsync(); raises the event .DoWord delegate w inturn invokes bw_DoWork() where ALL
-            //bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+            //bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);//If the BackgroundWorker was created from the UI thread, then the RunWorkerCompleted event will also be raised on the UI thread
             bw.ProgressChanged += bw_ProgressChanged;
         }
 
@@ -78,7 +78,7 @@ namespace CopyFiles
             {
              
                 fileName = dlgFrom.FileName;
-                textBox1.Text = fileName;
+                textBox1.Text = fileName;//reverse way of assignment operator
                 lblFound.Text = "";
                 lblNotFound.Text = "";
                 newFile = "";
@@ -121,7 +121,7 @@ namespace CopyFiles
             }
             if (bw.IsBusy != true)
             {
-                bw.RunWorkerAsync();
+                bw.RunWorkerAsync();//in single thread app, until this fn completes, control will NOT move forward. But in this Async_BgWorker, control moves on & a 2nd thread starts here
             }
             btnFrom.Enabled  = false;
             btnTo.Enabled    = false;
@@ -162,9 +162,9 @@ namespace CopyFiles
                 {
                     if(!string.IsNullOrWhiteSpace(path)) missingFiles++;
                 }
-                bw.ReportProgress(linesRead*100/allPathsArray.Length);
+                bw.ReportProgress(linesRead * 100 / allPathsArray.Length);//'ReportProgress' calls the delegate 'ProgressChanged' & indirectly all the methods assigned to that delg
             }
-            lblFound.Text = "Files Found: " + counter;
+            lblFound.Text = "Files Found: " + counter;//if set break point here & ebug then err. Thou runs fine without debug. Class-Race issue in multiThread apps. Speed at w sth is done matters. Tried moving this line to bw_completed BUT didn't work:Reason=<<If the BackgroundWorker was created from the UI thread, then the RunWorkerCompleted event will also be raised on the UI thread>> = https://social.msdn.microsoft.com/Forums/vstudio/en-US/110f362f-6009-465b-a940-895e23545ad5/getting-invalidoperationexception-when-running-debug-due-to-a-crossthread-operation?forum=vsdebug
             counter = 0;
             found = 0;
             linesRead = 0;
