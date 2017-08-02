@@ -38,7 +38,7 @@ namespace CopyFiles
         public Form1()
         {
             InitializeComponent();
-            lblFound.Text = "";
+            lblFound.Text = "";//remove the default txt from lbls
             lblNotFound.Text = "";
             lblReportProgress.Text = "";
             InitializeBackgroundWorker();
