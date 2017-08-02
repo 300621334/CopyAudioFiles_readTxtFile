@@ -9,6 +9,18 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;//needed for File....
 //Overview of DialogueBoxes: https://msdn.microsoft.com/en-us/library/aa969773(v=vs.110).aspx
+
+/*From Tools->Options->Environment->Keyboard->mapping scheme (Default)
+
+Expand all: CTRL + M, CTRL + X  == M=minimize, A=All, X=none :-)
+Collapse all: CTRL + M, CTRL + A
+For selected areas:
+
+Expand selection: CTRL + M, CTRL + E
+Collapse selection: CTRL + M, CTRL + S == M=Minimize, S=Selected, E=Expand :-)
+ */
+
+
 /*bgWorker:
  1.create instance of bw.
  2.init bw on loading of form (inside constructor Form1())
@@ -25,7 +37,7 @@ namespace CopyFiles
         #region Global Vars
         string fileName = "";
         string folder = "";
-        string newFile = "";
+        string newFile = "", xmlOriginFile = "", xmlDestinFile = "";
         string[] allPathsArray = null;
         int missingFiles = 0;
         int found = 0;
@@ -94,7 +106,7 @@ namespace CopyFiles
 
         private void bw_DoWork(Object sender, DoWorkEventArgs e)
         {
-            startCopying();
+            startCopying((bool)e.Argument);//if copyXml chk Bx checked, pass true, else pass false. Arg comes from bw.RunWorkerAsync(copyXml);
         }
         #endregion
 
@@ -155,7 +167,8 @@ namespace CopyFiles
             }
             if (bw.IsBusy != true)
             {
-                bw.RunWorkerAsync();//in single thread app, until this fn completes, control will NOT move forward. But in this Async_BgWorker, control moves on & a 2nd thread starts here
+                bool copyXml = copyXmlChk.Checked;
+                bw.RunWorkerAsync(copyXml);//in single thread app, until this fn completes, control will NOT move forward. But in this Async_BgWorker, control moves on & a 2nd thread starts here
             }
             btnFrom.Enabled  = false;
             btnTo.Enabled    = false;
@@ -169,7 +182,7 @@ namespace CopyFiles
 
 
         #region Method StartCopying
-        private void startCopying()
+        private void startCopying(bool copyXml)
         {
             try
             {
@@ -192,9 +205,12 @@ namespace CopyFiles
                 if (File.Exists(path))
                 {
                 newFile = folder + "\\" + path.Substring(path.LastIndexOf('\\') + 1);
+                xmlOriginFile = path.Replace(".wav",".xml");
+                xmlDestinFile = newFile.Replace(".wav", ".xml");
                 try
                 {
                     File.Copy(path, newFile, true);
+                    if(copyXml)File.Copy(xmlOriginFile, xmlDestinFile, true);
                     counter++;
                 }
                 catch (FileNotFoundException ex)

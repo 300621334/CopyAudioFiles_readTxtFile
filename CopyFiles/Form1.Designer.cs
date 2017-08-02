@@ -36,6 +36,7 @@
             this.lblFound = new System.Windows.Forms.Label();
             this.lblNotFound = new System.Windows.Forms.Label();
             this.lblReportProgress = new System.Windows.Forms.Label();
+            this.copyXmlChk = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnFrom
@@ -113,11 +114,22 @@
             this.lblReportProgress.TabIndex = 7;
             this.lblReportProgress.Text = "label1";
             // 
+            // copyXmlChk
+            // 
+            this.copyXmlChk.AutoSize = true;
+            this.copyXmlChk.Location = new System.Drawing.Point(382, 172);
+            this.copyXmlChk.Name = "copyXmlChk";
+            this.copyXmlChk.Size = new System.Drawing.Size(106, 21);
+            this.copyXmlChk.TabIndex = 8;
+            this.copyXmlChk.Text = "Copy XML ?";
+            this.copyXmlChk.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(631, 206);
+            this.Controls.Add(this.copyXmlChk);
             this.Controls.Add(this.lblReportProgress);
             this.Controls.Add(this.lblNotFound);
             this.Controls.Add(this.lblFound);
@@ -143,6 +155,7 @@
         private System.Windows.Forms.Label lblFound;
         private System.Windows.Forms.Label lblNotFound;
         private System.Windows.Forms.Label lblReportProgress;
+        private System.Windows.Forms.CheckBox copyXmlChk;
     }
 }
 
